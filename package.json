@@ -1,0 +1,28 @@
+{
+  "name": "pdf-rag-chatbot",
+  "version": "1.0.0",
+  "description": "Production-style PDF RAG chatbot using React, Node.js, PostgreSQL, pgvector and OpenAI.",
+  "type": "module",
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js",
+    "migrate": "node src/db/migrate.js",
+    "test:retrieval": "node src/utils/test-retrieval.js",
+    "test:reranking": "node src/utils/test-reranking.js",
+    "test:context": "node src/utils/test-context.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.6",
+    "dotenv": "^18.0.6",
+    "express": "^5.2.1",
+    "multer": "^2.4.0",
+    "openai": "^7.30.0",
+    "pdf-parse": "^2.4.5",
+    "pg": "^8.23.1",
+    "pgvector": "^0.3.0",
+    "zod": "^4.6.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

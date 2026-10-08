@@ -1,0 +1,62 @@
+services:
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: pdf-rag-postgres
+
+    environment:
+      POSTGRES_DB: pdf_rag_chatbot
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123456
+
+    ports:
+      - "5433:5432"
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "pg_isready -U postgres -d pdf_rag_chatbot"
+        ]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: pdf-rag-api
+
+    environment:
+      PORT: 3000
+
+      DATABASE_URL: postgresql://postgres:123456@postgres:5432/pdf_rag_chatbot
+
+      OPENAI_API_KEY: ${OPENAI_API_KEY}
+
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-4.1-mini}
+
+      OPENAI_EMBEDDING_MODEL: ${OPENAI_EMBEDDING_MODEL:-text-embedding-3-small}
+
+      EMBEDDING_PROVIDER: ${EMBEDDING_PROVIDER:-local}
+
+      LLM_PROVIDER: ${LLM_PROVIDER:-local}
+
+      CLIENT_URL: ${CLIENT_URL:-http://localhost:5173}
+
+    ports:
+      - "3000:3000"
+
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+    volumes:
+      - ./uploads:/app/uploads
+
+volumes:
+  postgres_data:
